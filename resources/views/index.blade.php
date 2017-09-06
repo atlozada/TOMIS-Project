@@ -14,7 +14,6 @@
 
             <div class="links">
                 <a href="{{ route('map') }}">Map</a>
-                <a href="#">Code Documentation</a>
                 <a href="https://www.mapbox.com/mapbox-gl-js/api/">Mapbox Gl JS Documentation</a>
                 <a href="https://github.com/atlozada/TOMIS-Project">GitHub</a>
             </div>

@@ -15,7 +15,6 @@
 
     <div class="navbar">
         <a class='nav' href="{{ route('home') }}">Home</a>
-        <a class='nav' href="#">Code Documentation</a>
         <a class='nav' href="https://www.mapbox.com/mapbox-gl-js/api/">Mapbox Gl JS Documentation</a>
         <a class='nav' href="https://github.com/atlozada/TOMIS-Project">GitHub</a>
     </div>
