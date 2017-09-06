@@ -350,12 +350,6 @@ var polyLayerArray = [['amphibians', "mapbox://wildthingapp.bg90sqk5", "amphibia
                         ['pi_data', "mapbox://wildthingapp.8m2gm1gt", "priority_index", 'Priority_Index_Summary-dei689', priorityIndexPaint],
                         ['birds', "mapbox://wildthingapp.9zbuyuqx", "bird-layer", "Birds_Total_Richness_Poly-9w0eo0", birdPaint]];
 
-
-
-$(function() {
-
-});
-
 //Adds multiple data sources and layers to the map
 function loadMap() {
 
@@ -490,11 +484,6 @@ function setEventListeners() {
                       [$("[name='priority-checkbox']"), 'priority_index'],
                       [$("[name='bird-checkbox']"),'bird-layer']];
 
-    //Variables are to maintain the state of the currently shown layers for the purposes of showing/hiding only two layers
-    //at a time and dynamically removing layers as they are pushed down the draw order
-    var topLayer = 'wildness';
-    var secondLayer = 'climate';
-
     var sliderArray = [[$('#wildnessSlider'), 'wildness', 'raster-opacity', 'wildnessSlider'],
                        [$('#amphibSlider'), 'amphibian-layer', 'fill-opacity', 'amphibSlider'],
                        [$('#fishSlider'), 'fish-layer', 'fill-opacity', 'fishSlider'],
@@ -510,10 +499,13 @@ function setEventListeners() {
             if (layer[0].bootstrapSwitch('state')) {
                 map.setLayoutProperty(layer[1]+'-layer', 'visibility', 'visible');
                 map.setLayoutProperty(layer[1]+'-line', 'visibility','visible');
+                map.moveLayer(layer[1]+'-layer');
+                map.moveLayer(layer[1]+'-line');
 
             } else {
                 map.setLayoutProperty(layer[1]+'-layer', 'visibility', 'none');
                 map.setLayoutProperty(layer[1]+'-line', 'visibility','none');
+
             }
         });
     });
@@ -527,15 +519,12 @@ function setEventListeners() {
                         map.setLayoutProperty('vector'+i, 'visibility', 'visible');
                         map.moveLayer('vector'+i);
                     }
-                    secondLayer = topLayer;
-                    topLayer = layer[1];
-
-                    map.moveLayer(topLayer);
+                    map.moveLayer(layer[1], smallLayerPartition);
 
                     lineLayerArray.forEach(function(layer) {
                         if (map.getLayoutProperty(layer[2], 'visibility') == 'visible') {
-                            map.moveLayer(layer[2]);
-                            map.moveLayer(layer[3]);
+                            map.moveLayer(layer[2],smallLayerPartition);
+                            map.moveLayer(layer[3],smallLayerPartition);
                         }
                     });
                 } else {
@@ -551,14 +540,13 @@ function setEventListeners() {
 
                     map.setLayoutProperty(layer[1], 'visibility', 'visible');
 
-                    secondLayer = topLayer;
-                    topLayer = layer[1];
-                    map.moveLayer(topLayer);
+                    map.moveLayer(layer[1], smallLayerPartition);
+
 
                     lineLayerArray.forEach(function(layer) {
                         if (map.getLayoutProperty(layer[2], 'visibility') == 'visible') {
-                            map.moveLayer(layer[2]);
-                            map.moveLayer(layer[3]);
+                            map.moveLayer(layer[2],smallLayerPartition);
+                            map.moveLayer(layer[3],smallLayerPartition);
                         }
                     });
                 } else {
@@ -567,19 +555,6 @@ function setEventListeners() {
 
             });
         }
-    });
-
-    sliderArray.forEach(function(layer) {
-        layer[0].on('change', function(e) {
-            var value = parseInt(e.target.value, 10)/100;
-            map.setPaintProperty(layer[1], layer[2], value);
-            if (layer[1] == 'wildness') {
-                for (i=0;i<polyArray.length;i++) {
-                    map.setPaintProperty('vector'+i, 'fill-opacity', value);
-                }
-            }
-            $('label[for="'+layer[3]+'"]').innerHTML = value;
-        });
     });
 
     //Add wilderness info popup
@@ -619,7 +594,6 @@ function loadSelection(map) {
 
         $(checkboxArray[i]).bootstrapSwitch();
     }
-
 }
 
 //Map initialization
